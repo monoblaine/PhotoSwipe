@@ -20,11 +20,11 @@ markdownpage: true
 
 First things that you should know before you start:
 
-- PhotoSwipe is made simple and fast for end users, not for developers. It ain't simple jQuery plugin, at least basic JavaScript knowledge is required to install.
-- PhotoSwipe requires predefined image dimensions. If your app is unable to retrieve them - consider using some other script. [More about this](faq.html#image-size).
+- PhotoSwipe is not a simple jQuery plugin, at least basic JavaScript knowledge is required to install.
+- PhotoSwipe requires predefined image dimensions ([more about this](faq.html#image-size)).
 - If you use PhotoSwipe on non-responsive website &ndash; controls will be scaled on mobile (as the whole page is scaled). So you'll need to implement custom controls (e.g. single large close button in top right corner).
 - All code in the documentation is pure Vanilla JS and supports IE 8 and above. If your website or app uses some JavaScript framework (like jQuery or MooTools) or you don't need to support old browsers – feel free to simplify the code.
-- Avoid serving big images (larger than 2000x1500px) for mobile, as they will dramatically reduce animation performance and can cause crash (especially on iOS Safari). Possible solutions: [serve responsive images](responsive-images.html), or open image on a separate page, or use libraries that support image tiling (like [Leaflet](http://leafletjs.com/)). [More info in FAQ](faq.html#mobile-crash).
+- Avoid serving big images (larger than 2000x1500px) for mobile, as they will dramatically reduce animation performance and can cause crash (especially on iOS Safari). Possible solutions: [serve responsive images](responsive-images.html), or open image on a separate page, or use libraries that support image tiling (like [Leaflet](http://leafletjs.com/)) ([more in FAQ](faq.html#mobile-crash)).
 
 ## <a name="initialization"></a> Initialization
 
@@ -149,7 +149,7 @@ You might ask, why PhotoSwipe doesn't add this code automatically via JS, reason
 
 ### Step 3: initialize
 
-Execute `PhotoSwipe` contructor. It accepts 4 arguments:
+Execute `PhotoSwipe` constructor. It accepts 4 arguments:
 
 1. `.pswp` element from step 2 (it must be added to DOM).
 2. PhotoSwipe UI class. If you included default `photoswipe-ui-default.js`, class will be `PhotoSwipeUI_Default`. Can be `false`.
@@ -276,7 +276,7 @@ Let's assume that you have a list of links/thumbnails that look like this ([more
 ... and you want click on the thumbnail to open PhotoSwipe with large image (like it's done on a demo page). All you need to do is:
 
 1. Bind click event to links/thumbnails.
-2. After user clicked on on thumbnail, find its index.
+2. After user clicked on thumbnail, find its index.
 3. Create an array of slide objects from DOM elements – loop through all links and retrieve `href` attribute (large image url), `data-size` attribute (its size), `src` of thumbnail, and contents of caption.
 
 PhotoSwipe doesn't really care how will you do this. If you use frameworks like jQuery or MooTools, or if you don't need to support IE8, code can be simplified dramatically.
@@ -506,16 +506,16 @@ Tip: you may download example from CodePen to play with it locally (`Edit on Cod
 - If you're not experienced in pure JavaScript and don't know how to parse DOM, refer to [QuirksMode](http://quirksmode.org/dom/core/#gettingelements) and [documentation on MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element.getElementsByTagName).
 - Note that IE8 does not support HTML5 `<figure>` and `<figcaption>` elements, so you need to include [html5shiv](https://github.com/aFarkas/html5shiv) in `<head>` section ([cdnjs hosted version](http://cdnjs.com/libraries/html5shiv/) is used in example):
 
-```html
-<!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
-<![endif]-->
-```
+    ```html
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+    ```
 
 
 ## About
 
-PhotoSwipe is in beta, please [keep script updated](faq.html#keep-updated), report bugs through [GitHub](https://github.com/dimsemenov/PhotoSwipe), suggest features on [UserVoice](https://photoswipe.uservoice.com/forums/275302-feature-requests-ideas) and ask questions through [StackOverflow](http://stackoverflow.com/questions/ask?tags=javascript,photoswipe).
+Please [keep script updated](faq.html#keep-updated), report bugs through [GitHub](https://github.com/dimsemenov/PhotoSwipe), suggest features on [UserVoice](https://photoswipe.uservoice.com/forums/275302-feature-requests-ideas) and ask questions through [StackOverflow](http://stackoverflow.com/questions/ask?tags=javascript,photoswipe).
 
 Know how this page can be improved? Found a typo? [Suggest an edit!](https://github.com/dimsemenov/PhotoSwipe/blob/master/website/documentation/getting-started.md)
 

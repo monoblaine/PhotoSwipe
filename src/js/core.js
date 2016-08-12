@@ -20,7 +20,7 @@ var _options = {
 	pinchToClose: true,
 	closeOnScroll: true,
 	closeOnVerticalDrag: true,
-	verticalDragRange: 0.6,
+	verticalDragRange: 0.75,
 	hideAnimationDuration: 333,
 	showAnimationDuration: 333,
 	showHideOpacity: false,
@@ -36,15 +36,14 @@ var _options = {
     	if(isMouseClick) {
     		return 1;
     	} else {
-    		return item.initialZoomLevel < 0.7 ? 1 : 1.5;
+    		return item.initialZoomLevel < 0.7 ? 1 : 1.33;
     	}
     },
-    maxSpreadZoom: 2,
+    maxSpreadZoom: 1.33,
 	modal: true,
 
 	// not fully implemented yet
-	scaleMode: 'fit', // TODO
-	alwaysFadeIn: false // TODO
+	scaleMode: 'fit' // TODO
 };
 framework.extend(_options, options);
 
@@ -99,6 +98,7 @@ var _isOpen,
 	_currentWindowScrollY,
 	_features,
 	_windowVisibleSize = {},
+	_renderMaxResolution = false,
 
 	// Registers PhotoSWipe module (History, Controller ...)
 	_registerModule = function(name, module) {
@@ -144,21 +144,43 @@ var _isOpen,
 		_bgOpacity = opacity;
 		self.bg.style.opacity = opacity * _options.bgOpacity;
 	},
-	
-	_applyZoomTransform = function(styleObj,x,y,zoom) {
+
+	_applyZoomTransform = function(styleObj,x,y,zoom,item) {
+		if(!_renderMaxResolution || (item && item !== self.currItem) ) {
+			zoom = zoom / (item ? item.fitRatio : self.currItem.fitRatio);	
+		}
+			
 		styleObj[_transformKey] = _translatePrefix + x + 'px, ' + y + 'px' + _translateSufix + ' scale(' + zoom + ')';
 	},
-	_applyCurrentZoomPan = function() {
+	_applyCurrentZoomPan = function( allowRenderResolution ) {
 		if(_currZoomElementStyle) {
+
+			if(allowRenderResolution) {
+				if(_currZoomLevel > self.currItem.fitRatio) {
+					if(!_renderMaxResolution) {
+						_setImageSize(self.currItem, false, true);
+						_renderMaxResolution = true;
+					}
+				} else {
+					if(_renderMaxResolution) {
+						_setImageSize(self.currItem);
+						_renderMaxResolution = false;
+					}
+				}
+			}
+			
+
 			_applyZoomTransform(_currZoomElementStyle, _panOffset.x, _panOffset.y, _currZoomLevel);
 		}
 	},
 	_applyZoomPanToItem = function(item) {
 		if(item.container) {
+
 			_applyZoomTransform(item.container.style, 
 								item.initialPosition.x, 
 								item.initialPosition.y, 
-								item.initialZoomLevel);
+								item.initialZoomLevel,
+								item);
 		}
 	},
 	_setTranslateX = function(x, elStyle) {
@@ -167,12 +189,11 @@ var _isOpen,
 	_moveMainScroll = function(x, dragging) {
 
 		if(!_options.loop && dragging) {
-			// if of current item during scroll (float)
-			var newSlideIndexOffset = _currentItemIndex + (_slideSize.x * _currPositionIndex - x)/_slideSize.x; 
-			var delta = Math.round(x - _mainScrollPos.x);
+			var newSlideIndexOffset = _currentItemIndex + (_slideSize.x * _currPositionIndex - x) / _slideSize.x,
+				delta = Math.round(x - _mainScrollPos.x);
 
 			if( (newSlideIndexOffset < 0 && delta > 0) || 
-				(newSlideIndexOffset >= _getNumItems()-1 && delta < 0) ) {
+				(newSlideIndexOffset >= _getNumItems() - 1 && delta < 0) ) {
 				x = _mainScrollPos.x + delta * _options.mainScrollEndFriction;
 			} 
 		}
@@ -474,11 +495,11 @@ var publicMethods = {
 		_currentWindowScrollY = _offset.y = y;
 		_shout('updateScrollOffset', _offset);
 	},
-	applyZoomPan: function(zoomLevel,panX,panY) {
+	applyZoomPan: function(zoomLevel,panX,panY,allowRenderResolution) {
 		_panOffset.x = panX;
 		_panOffset.y = panY;
 		_currZoomLevel = zoomLevel;
-		_applyCurrentZoomPan();
+		_applyCurrentZoomPan( allowRenderResolution );
 	},
 
 	init: function() {
@@ -489,7 +510,7 @@ var publicMethods = {
 
 		var i;
 
-		self.framework = framework; // basic function
+		self.framework = framework; // basic functionality
 		self.template = template; // root DOM element of PhotoSwipe
 		self.bg = framework.getChildByClass(template, 'pswp__bg');
 
@@ -644,7 +665,7 @@ var publicMethods = {
 		framework.addClass(template, 'pswp--visible');
 	},
 
-	// Closes the gallery, then destroy it
+	// Close the gallery, then destroy it
 	close: function() {
 		if(!_isOpen) {
 			return;
@@ -655,10 +676,10 @@ var publicMethods = {
 		_shout('close');
 		_unbindEvents();
 
-		_showOrHide( self.currItem, null, true, self.destroy);
+		_showOrHide(self.currItem, null, true, self.destroy);
 	},
 
-	// destroys gallery (unbinds events, cleans up intervals and timeouts to avoid memory leaks)
+	// destroys the gallery (unbinds events, cleans up intervals and timeouts to avoid memory leaks)
 	destroy: function() {
 		_shout('destroy');
 
@@ -675,7 +696,7 @@ var publicMethods = {
 
 		framework.unbind(self.scrollWrap, _downEvents, self);
 
-		// we unbind lost event at the end, as closing animation may depend on it
+		// we unbind scroll event at the end, as closing animation may depend on it
 		framework.unbind(window, 'scroll', self);
 
 		_stopDragUpdateLoop();
@@ -799,6 +820,7 @@ var publicMethods = {
 
 
 		self.currItem = _getItemAt( _currentItemIndex );
+		_renderMaxResolution = false;
 		
 		_shout('beforeChange', _indexDiff);
 
@@ -831,7 +853,8 @@ var publicMethods = {
 			var prevItem = _getItemAt(_prevItemIndex);
 			if(prevItem.initialZoomLevel !== _currZoomLevel) {
 				_calculateItemSize(prevItem , _viewportSize );
-				_applyZoomPanToItem( prevItem ); 
+				_setImageSize(prevItem);
+				_applyZoomPanToItem( prevItem ); 				
 			}
 
 		}
@@ -924,6 +947,7 @@ var publicMethods = {
 				}
 				if(item && item.container) {
 					_calculateItemSize(item, _viewportSize);
+					_setImageSize(item);
 					_applyZoomPanToItem( item );
 				}
 				
@@ -937,7 +961,7 @@ var publicMethods = {
 		if(_currPanBounds) {
 			_panOffset.x = _currPanBounds.center.x;
 			_panOffset.y = _currPanBounds.center.y;
-			_applyCurrentZoomPan();
+			_applyCurrentZoomPan( true );
 		}
 		
 		_shout('resize');
@@ -974,7 +998,6 @@ var publicMethods = {
 
 		_roundPoint(destPanOffset);
 
-		// _startZoomLevel = destZoomLevel;
 		var onUpdate = function(now) {
 			if(now === 1) {
 				_currZoomLevel = destZoomLevel;
@@ -990,7 +1013,7 @@ var publicMethods = {
 				updateFn(now);
 			}
 
-			_applyCurrentZoomPan();
+			_applyCurrentZoomPan( now === 1 );
 		};
 
 		if(speed) {

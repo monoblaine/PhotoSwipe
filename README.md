@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/dimsemenov/PhotoSwipe.svg)](https://travis-ci.org/dimsemenov/PhotoSwipe) 
 [![devDependency Status](https://david-dm.org/dimsemenov/PhotoSwipe/dev-status.svg)](https://david-dm.org/dimsemenov/PhotoSwipe#info=devDependencies)
-[![Donate](https://img.shields.io/gratipay/dimsemenov.svg?style=flat)](https://gratipay.com/dimsemenov/) 
 [![Flattr](http://api.flattr.com/button/flattr-badge-large.png)](http://flattr.com/thing/3698358/dimsemenovPhotoSwipe-on-GitHub)
 
 JavaScript image gallery for mobile and desktop. 
@@ -25,6 +24,9 @@ JavaScript image gallery for mobile and desktop.
 - [Ember.js addon](https://github.com/poetic/ember-cli-photoswipe).
 - [Eager app](https://eager.io/app/DvuKIoU8iTOt).
 - [Koken CMS plugin](https://github.com/DanielMuller/koken-plugin-photoswipe).
+- [Orchard CMS module](https://gallery.orchardproject.net/List/Modules/Orchard.Module.Cascade.PhotoSwipe).
+- [Yellow CMS plugin](https://github.com/datenstrom/yellow-plugins/tree/master/gallery).
+- [Kirby CMS plugin](https://github.com/SiteMarina/guggenheim).
 
 Coded something useful? <a href='mailto:diiiimaaaa@gmail.com?subject="PhotoSwipe Plugin"'>Email me</a> and I’ll post a link to it here.
 

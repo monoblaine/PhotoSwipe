@@ -83,6 +83,7 @@
 	height: 100%;
 	background: $pswp__background-color;
 	opacity: 0;
+	transform: translateZ(0);
 	-webkit-backface-visibility: hidden;
 	will-change:opacity;
 }
@@ -145,7 +146,6 @@
 .pswp__container,
 .pswp__zoom-wrap {
 	-webkit-backface-visibility: hidden;
-	will-change: transform;
 }
 
 .pswp__item {
@@ -163,7 +163,6 @@
 	height: auto;
 	top: 0;
 	left: 0;
-	transition: opacity 0.15s;
 }
 
 /*
